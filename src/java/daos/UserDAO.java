@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import utils.DBUtils;
 
@@ -56,6 +57,32 @@ public class UserDAO {
             }
         }
         return result;
+    }
+    
+    public void register(UserDTO user) throws SQLException, ClassNotFoundException, NamingException {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        try {
+            conn = DBUtils.getConnection();
+            if (conn != null) {
+                String sql = "INSERT INTO tblUsers(email, name, password, status, phone, address) VALUES(?,?,?,?,?)";
+                stm = conn.prepareStatement(sql);
+                stm.setString(1, user.getEmail());
+                stm.setString(2, user.getName());
+                stm.setString(3, user.getPassword());
+                stm.setBoolean(4, user.getStatus());
+                stm.setString(5, user.getPhone());
+                stm.setString(6, user.getAddress());
+                stm.executeUpdate();
+            }
+        } finally {
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
 }

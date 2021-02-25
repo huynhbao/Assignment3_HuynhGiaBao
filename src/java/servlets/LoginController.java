@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 public class LoginController extends HttpServlet {
 
     private static final String ERROR = "login.jsp";
-    private static final String STUDENT_PAGE = "StudentController";
+    private static final String SUCCESS = "ShoppingController";
     private static final Logger LOGGER = Logger.getLogger(LoginController.class);
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -56,10 +56,10 @@ public class LoginController extends HttpServlet {
                     UserDTO user = dao.checkLogin(email, password);
                     if (user != null) {
                         if (user.getStatus()) {
-                            
                             session.setAttribute("LOGIN_USERDTO", user);
+                            url = SUCCESS;
                         } else {
-                            request.setAttribute("LOGIN_MSG", "Your account has been disabled!");
+                            request.setAttribute("LOGIN_MSG", "Your account has not been activated!");
                         }
                     } else {
                         request.setAttribute("LOGIN_MSG", "Email or Password incorrect!");

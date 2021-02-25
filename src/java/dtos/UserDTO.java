@@ -15,12 +15,12 @@ public class UserDTO {
     private String password;
     private String phone;
     private String address;
-    private String status;
+    private boolean status;
 
     public UserDTO() {
     }
 
-    public UserDTO(String email, String name, String password, String phone, String address, String status) {
+    public UserDTO(String email, String name, String password, String phone, String address, boolean status) {
         this.email = email;
         this.name = name;
         this.password = password;
@@ -69,13 +69,14 @@ public class UserDTO {
         this.address = address;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
+
     
     
 }

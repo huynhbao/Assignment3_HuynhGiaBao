@@ -5,6 +5,8 @@
  */
 package servlets;
 
+import daos.UserDAO;
+import dtos.UserDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -12,6 +14,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -20,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
 
+    private static final String ERROR = "login.jsp";
+    private static final String STUDENT_PAGE = "StudentController";
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class);
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,17 +39,37 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String url = ERROR;
+        try {
+            HttpSession session = request.getSession();
+            UserDTO userSs = (UserDTO) session.getAttribute("LOGIN_USERDTO");
+
+            if (userSs != null) {
+                
+            } else {
+                String email = request.getParameter("txtEmail");
+                String password = request.getParameter("txtPassword");
+
+                if (email != null || password != null) {
+                    UserDAO dao = new UserDAO();
+
+                    UserDTO user = dao.checkLogin(email, password);
+                    if (user != null) {
+                        if (user.getStatus()) {
+                            
+                            session.setAttribute("LOGIN_USERDTO", user);
+                        } else {
+                            request.setAttribute("LOGIN_MSG", "Your account has been disabled!");
+                        }
+                    } else {
+                        request.setAttribute("LOGIN_MSG", "Email or Password incorrect!");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

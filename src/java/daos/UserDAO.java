@@ -28,7 +28,7 @@ public class UserDAO {
         try {
             conn = DBUtils.getConnection();
             if (conn != null) {
-                String sql = "SELECT name, email, status, roleID FROM tblUsers WHERE email = ? AND password = ?";
+                String sql = "SELECT name, phone, address, status FROM tblUsers WHERE email = ? AND password = ?";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, email);
                 stm.setString(2, password);
@@ -36,9 +36,10 @@ public class UserDAO {
 
                 if (rs.next()) {
                     String name = rs.getString("name");
-                    String status = rs.getString("status");
-                    String roleID = rs.getString("roleID");
-                    result = new UserDTO(email, name, "", status, roleID);
+                    String phone = rs.getString("phone");
+                    String address = rs.getString("address");
+                    boolean status = rs.getBoolean("status");
+                    result = new UserDTO(email, name, "", phone, address, status);
                 }
             }
         } catch (Exception e) {

@@ -17,10 +17,7 @@
         <div style="text-align: center;">
             <h1 style="margin-top: 140px;">${requestScope.MSG != null ? requestScope.MSG : 'ERROR! Try again!!'}</h1>
             <c:set var="url" value="student"/>
-            <c:if test="${sessionScope.LOGIN_USERDTO.roleID == 'admin'}">
-                <c:set var="url" value="Management"/>
-            </c:if>
-            <a href="${url}" style="margin-top: 150px;">Back to home</a>
+            <a href="shopping" style="margin-top: 150px;">Back to home</a>
         </div>
     </body>
 </html>

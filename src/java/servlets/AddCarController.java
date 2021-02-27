@@ -5,9 +5,14 @@
  */
 package servlets;
 
-import daos.UserDAO;
+import daos.ProductDAO;
+import dtos.CarDTO;
+import dtos.CartDTO;
 import dtos.UserDTO;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,12 +25,14 @@ import org.apache.log4j.Logger;
  *
  * @author HuynhBao
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "AddCarController", urlPatterns = {"/AddCarController"})
+public class AddCarController extends HttpServlet {
 
-    private static final String ERROR = "login.jsp";
+    private static final String ERROR = "invalid.jsp";
     private static final String SUCCESS = "ShoppingController";
-    private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+
+    private static final Logger LOGGER = Logger.getLogger(AddCarController.class);
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,30 +48,59 @@ public class LoginController extends HttpServlet {
         String url = ERROR;
         try {
             HttpSession session = request.getSession();
-            UserDTO userSs = (UserDTO) session.getAttribute("LOGIN_USERDTO");
+            UserDTO user = (UserDTO) session.getAttribute("LOGIN_USERDTO");
 
-            if (userSs != null) {
-                
-            } else {
-                String email = request.getParameter("txtEmail");
-                String password = request.getParameter("txtPassword");
+            String carID = request.getParameter("txtCarID");
+            String startDateStr = request.getParameter("txtStartDate");
+            String endDateStr = request.getParameter("txtEndDate");
 
-                if (email != null || password != null) {
-                    UserDAO dao = new UserDAO();
-
-                    UserDTO user = dao.checkLogin(email, password);
-                    if (user != null) {
-                        if (user.getStatus()) {
-                            session.setAttribute("LOGIN_USERDTO", user);
-                            url = SUCCESS;
-                        } else {
-                            request.setAttribute("LOGIN_MSG", "Your account has not been activated!");
-                        }
-                    } else {
-                        request.setAttribute("LOGIN_MSG", "Email or Password incorrect!");
-                    }
-                }
+            CartDTO cart = (CartDTO) session.getAttribute("CART");
+            if (cart == null) {
+                cart = new CartDTO(user.getEmail(), null);
             }
+
+            try {
+                ProductDAO dao = new ProductDAO();
+                CarDTO car = dao.getCarDTO(Integer.parseInt(carID));
+                if (car != null) {
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    Date startDate = null;
+                    Date endDate = null;
+                    if (startDateStr.isEmpty()) {
+                        request.setAttribute("MSG", "Start Date is empty!");
+                    } else {
+                        startDate = df.parse(startDateStr);
+                    }
+
+                    if (endDateStr.isEmpty()) {
+                        request.setAttribute("MSG", "End Date is empty!");
+                    } else {
+                        endDate = df.parse(endDateStr);
+                    }
+
+                    if (startDate != null && endDate != null) {
+                        if (startDate.after(endDate)) {
+                            request.setAttribute("MSG", "End Date must greater or equal start date!");
+                        } else if (endDate.compareTo(startDate) <= 0) {
+                            request.setAttribute("MSG", "You must rent a minimum of 1 day!");
+                        } else {
+                            car.setStartDate(startDate);
+                            car.setEndDate(endDate);
+                            car.setQuantity(1);
+                            cart.add(car);
+                            session.setAttribute("CART", cart);
+                            request.setAttribute("SUCCESS", true);
+                            url = SUCCESS;
+                        }
+                    }
+
+                } else {
+                    request.setAttribute("MSG", "Car not found");
+                }
+            } catch (NumberFormatException ex) {
+                request.setAttribute("MSG", "Car not found");
+            }
+
         } catch (Exception e) {
             LOGGER.error(e.toString());
         } finally {

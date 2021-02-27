@@ -5,8 +5,8 @@
  */
 package servlets;
 
-import daos.UserDAO;
-import dtos.UserDTO;
+import dtos.CarDTO;
+import dtos.CartDTO;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,12 +20,14 @@ import org.apache.log4j.Logger;
  *
  * @author HuynhBao
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "UpdateCarController", urlPatterns = {"/UpdateCarController"})
+public class UpdateCarController extends HttpServlet {
 
-    private static final String ERROR = "login.jsp";
-    private static final String SUCCESS = "ShoppingController";
-    private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+    private final static String ERROR = "cart.jsp";
+    private final static String SUCCESS = "cart.jsp";
+
+    private static final Logger LOGGER = Logger.getLogger(UpdateCarController.class);
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,32 +43,29 @@ public class LoginController extends HttpServlet {
         String url = ERROR;
         try {
             HttpSession session = request.getSession();
-            UserDTO userSs = (UserDTO) session.getAttribute("LOGIN_USERDTO");
 
-            if (userSs != null) {
-                
-            } else {
-                String email = request.getParameter("txtEmail");
-                String password = request.getParameter("txtPassword");
+            int carID = Integer.parseInt(request.getParameter("txtCarID")); 
+            int quantity = Integer.parseInt(request.getParameter("txtQuantity"));
 
-                if (email != null || password != null) {
-                    UserDAO dao = new UserDAO();
-
-                    UserDTO user = dao.checkLogin(email, password);
-                    if (user != null) {
-                        if (user.getStatus()) {
-                            session.setAttribute("LOGIN_USERDTO", user);
-                            url = SUCCESS;
-                        } else {
-                            request.setAttribute("LOGIN_MSG", "Your account has not been activated!");
+            if (quantity > 0) {
+                CartDTO cart = (CartDTO) session.getAttribute("CART");
+                if (cart != null) {
+                    for (CarDTO car : cart.getCart().values()) {
+                        if (car.getCarID() == carID) {
+                            car.setQuantity(quantity);
+                            cart.update(car);
+                            break;
                         }
-                    } else {
-                        request.setAttribute("LOGIN_MSG", "Email or Password incorrect!");
                     }
+                    request.setAttribute("SUCCESS", true);
+                    session.setAttribute("CART", cart);
+                    url = SUCCESS;
                 }
             }
+
         } catch (Exception e) {
             LOGGER.error(e.toString());
+            request.setAttribute("ERROR_QUANTITY", "Quantity must be integer number!");
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

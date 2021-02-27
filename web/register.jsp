@@ -38,6 +38,14 @@
                                 <input type="text" name="txtName" value="${param.txtName}" class="form__input" placeholder="Name">
                             </div>
                             <div class="form-group">
+                                <p class="text-danger">${ERROR_PHONE}</p>
+                                <input type="text" name="txtPhone" value="${param.txtPhone}" class="form__input" placeholder="Phone Number">
+                            </div>
+                            <div class="form-group">
+                                <p class="text-danger">${ERROR_ADDRESS}</p>
+                                <input type="text" name="txtAddress" value="${param.txtAddress}" class="form__input" placeholder="Address">
+                            </div>
+                            <div class="form-group">
                                 <p class="text-danger">${ERROR_PASSWORD}</p>
                                 <input type="password" name="txtPassword" class="form__input" placeholder="Password">
                             </div>

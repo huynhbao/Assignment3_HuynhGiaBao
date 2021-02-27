@@ -1,0 +1,186 @@
+ul li {
+    list-style: none;
+}
+
+.filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.filter-left ul {
+    display: flex;
+}
+
+.filter-left ul li {
+    margin-right: 40px;
+    cursor: pointer;
+    color: #7b7b7b;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.filter-left ul li.active {
+    color: #0113ff;
+}
+
+.filter-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-input::-webkit-input-placeholder {
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.filter-input {
+    margin-right: 40px;
+    padding: 3px 10px;
+    width: 200px;
+}
+
+.filter-lable {
+    position: relative;
+    cursor: pointer;
+    color: #7b7b7b;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.filter-lable:hover .filter-sort {
+    opacity: 1;
+    visibility: visible;
+}
+
+.filter-lable:hover::after {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 50px;
+    background-color: transparent;
+    bottom: -50px;
+    left: -50px;
+    z-index: 999;
+}
+
+.filter-lable i {
+    font-size: 16px;
+    margin-left: 8px;
+    color: #000;
+}
+
+.filter-sort {
+    position: absolute;
+    z-index: 999;
+    top: 50px;
+    left: calc(-250px + 70px);
+    width: 250px;
+    padding: 30px 30px 50px;
+    background-color: #212121;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .15s linear;
+}
+
+.filter-sort h3 {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.filter-sort ul li {
+    transition: all .15s ease-in-out;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.filter-sort ul li.active {
+    color: #fff;
+}
+
+.filter-sort ul li:hover {
+    color: #fff;
+}
+
+.hide {
+    display:none;
+}
+
+.basic-search {
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    border-bottom: 2px solid #00bbec;
+}
+
+.basic-search .input-field {
+    width: 100%;
+}
+
+.basic-search .input-field input {
+    padding: 10px 80px 10px 40px;
+}
+
+.basic-search .input-field .icon-wrap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 60px;
+    height: 100%;
+}
+
+.basic-search .input-field .icon-wrap svg {
+    width: 34px;
+    height: 34px;
+    fill: #ccc;
+}
+
+.input-field input {
+    height: 100%;
+    border: 0;
+    background: #fff;
+    display: block;
+    width: 100%;
+    padding: 10px 32px 10px 70px;
+    font-size: 18px;
+    color: #666;
+    border-radius: 3px;
+    height: 70px;
+    color: #555;
+}
+
+.advance-search .desc {
+    font-size: 14px;
+    color: #999;
+    display: block;
+    margin-bottom: 26px;
+    font-weight: bold;
+}
+
+input:focus{
+    outline: none;
+}
+
+.btn-search {
+    min-width: 100px;
+    height: 40px;
+    padding: 0 15px;
+    background: #00bbec;
+    white-space: nowrap;
+    border-radius: 0;
+    font-size: 14px;
+    color: #fff;
+    transition: all .2s ease-out, color .2s ease-out;
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 15%);
+}

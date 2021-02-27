@@ -5,7 +5,6 @@
  */
 package filters;
 
-import dtos.UserDTO;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -28,9 +27,10 @@ import org.apache.log4j.Logger;
  * @author HuynhBao
  */
 public class FilterDispatcher implements Filter {
-    
+
     private final List<String> USER;
     private final String LOGIN_PAGE = "login.jsp";
+    private final String SHOPPING_PAGE = "ShoppingController";
     private final String INVALID_PAGE = "invalid.jsp";
     private static final boolean debug = true;
 
@@ -39,11 +39,12 @@ public class FilterDispatcher implements Filter {
     // this value is null, this filter instance is not currently
     // configured. 
     private FilterConfig filterConfig = null;
-    
+
     public FilterDispatcher() {
         USER = new ArrayList<>();
-        USER.add("QuizController");
-    }    
+        USER.add("AddCarController");
+        USER.add("UpdateCarController");
+    }
 
     /**
      *
@@ -57,10 +58,10 @@ public class FilterDispatcher implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getRequestURI();
-        String url = LOGIN_PAGE;
+        String url = SHOPPING_PAGE;
 
         try {
             int lastIndex = uri.lastIndexOf("/");
@@ -68,28 +69,34 @@ public class FilterDispatcher implements Filter {
 
             if (resource.length() > 0) {
                 url = resource.substring(0, 1).toUpperCase() + resource.substring(1) + "Controller";
-                if (resource.lastIndexOf(".jpg") > 0 || resource.lastIndexOf(".css") > 0) {
+                if (resource.lastIndexOf(".svg") > 0 || resource.lastIndexOf(".jpg") > 0 || resource.lastIndexOf(".png") > 0 || resource.lastIndexOf(".css") > 0) {
                     url = null;
                 }
             }
 
             if (url != null) {
                 HttpSession session = req.getSession();
-                if (session == null || session.getAttribute("LOGIN_USERDTO") == null) {
+                if (url.contains("Shopping")) {
+
+                } else if (session == null || session.getAttribute("LOGIN_USERDTO") == null) {
                     if (url.contains("Login") || url.contains("Register")) {
-                    } else {
+
+                    } else if (USER.contains(url)) {
                         url = LOGIN_PAGE;
+                    } else {
+                        url = INVALID_PAGE;
                     }
                 } else {
-
-                    UserDTO user = (UserDTO) session.getAttribute("LOGIN_USERDTO");
-                    if (user != null) {
-                        
+                    if (USER.contains(url)) {
+                    } else if (url.equalsIgnoreCase("CartController")) {
+                        url = "cart.jsp";
                     } else {
-                        
+                        if (url.contains("Login") || url.contains("Register")) {
+                            url = SHOPPING_PAGE;
+                        } else {
+                            url = INVALID_PAGE;
+                        }
                     }
-                    
-
                 }
 
                 req.setCharacterEncoding("UTF-8");
@@ -122,16 +129,16 @@ public class FilterDispatcher implements Filter {
     /**
      * Destroy method for this filter
      */
-    public void destroy() {        
+    public void destroy() {
     }
 
     /**
      * Init method for this filter
      */
-    public void init(FilterConfig filterConfig) {        
+    public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (debug) {                
+            if (debug) {
                 log("FilterDispatcher:Initializing filter");
             }
         }
@@ -150,20 +157,20 @@ public class FilterDispatcher implements Filter {
         sb.append(")");
         return (sb.toString());
     }
-    
+
     private void sendProcessingError(Throwable t, ServletResponse response) {
-        String stackTrace = getStackTrace(t);        
-        
+        String stackTrace = getStackTrace(t);
+
         if (stackTrace != null && !stackTrace.equals("")) {
             try {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
-                PrintWriter pw = new PrintWriter(ps);                
+                PrintWriter pw = new PrintWriter(ps);
                 pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
 
                 // PENDING! Localize this for next official release
-                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");                
-                pw.print(stackTrace);                
+                pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
+                pw.print(stackTrace);
                 pw.print("</pre></body>\n</html>"); //NOI18N
                 pw.close();
                 ps.close();
@@ -180,7 +187,7 @@ public class FilterDispatcher implements Filter {
             }
         }
     }
-    
+
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -194,9 +201,9 @@ public class FilterDispatcher implements Filter {
         }
         return stackTrace;
     }
-    
+
     public void log(String msg) {
-        filterConfig.getServletContext().log(msg);        
+        filterConfig.getServletContext().log(msg);
     }
-    
+
 }

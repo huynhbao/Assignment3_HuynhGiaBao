@@ -5,10 +5,6 @@
  */
 package utils;
 
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 
 /**
@@ -21,7 +17,7 @@ public class MyUtils {
     public static final String EMAIL_PATTERN = "[a-zA-Z0-9]+[._a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]*[a-zA-Z]*@[a-zA-Z0-9]{2,8}.[a-zA-Z.]{2,6}";
     
     
-    public static final int recordPerPage = 20;
+    public static final int recordPerPage = 1;
     
     
     

@@ -79,8 +79,11 @@ public class AddCarController extends HttpServlet {
                     }
 
                     if (startDate != null && endDate != null) {
+                        Date now = df.parse(df.format(new Date()));
                         if (startDate.after(endDate)) {
                             request.setAttribute("MSG", "End Date must greater or equal start date!");
+                        } else if (startDate.compareTo(now) < 0) {
+                            request.setAttribute("ERROR_START_DATE", "The rental date must be greater than the current date!");
                         } else if (endDate.compareTo(startDate) <= 0) {
                             request.setAttribute("MSG", "You must rent a minimum of 1 day!");
                         } else {

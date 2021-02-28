@@ -112,9 +112,13 @@ public class ShoppingController extends HttpServlet {
                 }
 
                 if (startDate != null && endDate != null) {
+                    Date now = df.parse(df.format(new Date()));
                     if (startDate.after(endDate)) {
                         hasRequiredField = false;
                         request.setAttribute("ERROR_END_DATE", "End Date must greater or equal start date!");
+                    } else if (startDate.compareTo(now) < 0) {
+                        hasRequiredField = false;
+                        request.setAttribute("ERROR_START_DATE", "The rental date must be greater than the current date!");
                     } else if (endDate.compareTo(startDate) <= 0) {
                         request.setAttribute("ERROR_END_DATE", "You must rent a minimum of 1 day!");
                         hasRequiredField = false;

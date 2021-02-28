@@ -44,6 +44,7 @@ public class FilterDispatcher implements Filter {
         USER = new ArrayList<>();
         USER.add("AddCarController");
         USER.add("UpdateCarController");
+        USER.add("DeleteCarController");
     }
 
     /**

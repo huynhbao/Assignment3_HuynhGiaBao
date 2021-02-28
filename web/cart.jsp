@@ -32,6 +32,16 @@
                 text-transform: uppercase;
                 letter-spacing: 3px;
             }
+
+            #checkout-table {
+                width: 100px;
+            }
+
+            #checkout-table tr, #checkout-table td, #checkout-table th {
+                border: 1px solid #d2d2d2;
+                padding: 15px;
+                text-align: left;
+            }
         </style>
     </head>
     <body>
@@ -83,7 +93,7 @@
                                 <tbody>
                                     <c:set var="total" value="0"/>
                                     <c:forEach var="cart" items="${sessionScope.CART.getCart().values()}" varStatus="counter">
-                                    
+
                                         <tr>
                                             <td>${counter.count}</td>
                                             <td data-th="Product">
@@ -102,9 +112,9 @@
                                             </td>
                                             <td data-th="Category">${cart.category.name}</td>
                                             <td data-th="Quantity">
-                                                <form action="UpdateCar" id="updateCarForm">
+                                                <form action="UpdateCar" id="updateCarForm + ${counter.count}">
                                                     <input type="text" class="form-control form-control-lg text-center" name="txtQuantity" value="${cart.quantity}">
-                                                    <input type="hidden" name="txtCarID" value="${cart.carID}" />
+                                                    <input type="hidden" name="txtKey" value="${sessionScope.CART.getKey(cart)}" />
                                                 </form>
                                                 <small class="text-danger">
                                                     ${requestScope.ERROR_QUANTITY}
@@ -119,13 +129,12 @@
                                             <td data-th="Total" class="text-center">$${cart.price * cart.quantity * numOfDays}</td>
                                             <td class="actions" data-th="">
                                                 <div class="text-center">
-                                                    <button type="submit" form="updateCarForm" value="Update Item" class="btn btn-white border-secondary bg-white btn-md mb-2">
+                                                    <button type="submit" form="updateCarForm + ${counter.count}" value="Update Item" class="btn btn-white border-secondary bg-white btn-md mb-2">
                                                         <i class="fa fa-refresh"></i>
                                                     </button>
 
-                                                    <c:url var="deleteLink" value="MainController">
-                                                        <c:param name="btnAction" value="DeleteProduct"/>
-                                                        <c:param name="txtCarID" value="${cart.carID}"/>
+                                                    <c:url var="deleteLink" value="DeleteCar">
+                                                        <c:param name="txtKey" value="${sessionScope.CART.getKey(cart)}"/>
                                                     </c:url>
                                                     <a class="btn btn-white border-secondary bg-white btn-md mb-2 launchConfirm" onclick="deleteProduct(this); return;" data-toggle="modal" data-target="#confirm" href="${deleteLink}"><i class="fa fa-trash"></i></a>
 
@@ -141,14 +150,25 @@
                                                 </c:if>
                                             </td>
                                         </tr>
-                                    <c:set var="total" value="${total + (cart.price * cart.quantity)}"/>
-                                </c:forEach>
+                                        <c:set var="total" value="${total + (cart.price * cart.quantity)}"/>
+                                    </c:forEach>
 
                                 </tbody>
                             </table>
                             <div class="mt-3 float-right text-right">
                                 <h4>Subtotal:</h4>
                                 <h1>$${total}</h1>
+                                <table id="checkout-table" border="1">
+                                    <tr>
+                                        <th>Discount</th>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total</th>
+                                        <td>$${total}</td>
+                                    </tr>
+                                </table>
+
                             </div>
 
 
@@ -187,7 +207,7 @@
                 </div>
             </c:if>
             <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-                <a href="MainController?btnAction=Shopping">
+                <a href="shopping">
                     <i class="fa fa-arrow-left mr-2"></i> Continue Shopping</a>
             </div>
         </div>
@@ -200,7 +220,6 @@
                         .modal({backdrop: 'static', keyboard: false})
                         .one('click', '#delete', function (e) {
                             var href = ele.getAttribute("href");
-                            console.log(href);
                             window.location.href = href;
                         });
             }

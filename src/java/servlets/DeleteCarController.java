@@ -5,12 +5,10 @@
  */
 package servlets;
 
-import dtos.CarDTO;
 import dtos.CartDTO;
+import dtos.UserDTO;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,13 +21,13 @@ import org.apache.log4j.Logger;
  *
  * @author HuynhBao
  */
-@WebServlet(name = "UpdateCarController", urlPatterns = {"/UpdateCarController"})
-public class UpdateCarController extends HttpServlet {
+@WebServlet(name = "DeleteCarController", urlPatterns = {"/DeleteCarController"})
+public class DeleteCarController extends HttpServlet {
 
     private final static String ERROR = "cart.jsp";
     private final static String SUCCESS = "cart.jsp";
 
-    private static final Logger LOGGER = Logger.getLogger(UpdateCarController.class);
+    private static final Logger LOGGER = Logger.getLogger(DeleteCarController.class);
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,27 +45,18 @@ public class UpdateCarController extends HttpServlet {
         try {
             HttpSession session = request.getSession();
 
-            String key = request.getParameter("txtKey");
-            int quantity = Integer.parseInt(request.getParameter("txtQuantity"));
-
-            if (quantity > 0) {
+            String carID = request.getParameter("txtKey");
+            if (!"".equals(carID)) {
                 CartDTO cart = (CartDTO) session.getAttribute("CART");
                 if (cart != null) {
-                    if (cart.getCart().get(key) != null) {
-                        cart.getCart().get(key).setQuantity(quantity);
-                        cart.update(cart.getCart().get(key));
-                        request.setAttribute("SUCCESS", true);
-                        session.setAttribute("CART", cart);
-                        url = SUCCESS;
-                    }
-                    
-
+                    cart.delete(carID);
+                    session.setAttribute("CART", cart);
                 }
+                url = SUCCESS;
             }
 
         } catch (Exception e) {
             LOGGER.error(e.toString());
-            request.setAttribute("ERROR_QUANTITY", "Quantity must be integer number!");
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

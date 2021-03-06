@@ -5,27 +5,30 @@
  */
 package servlets;
 
-import dtos.CartDTO;
+import com.google.gson.Gson;
+import daos.UserDAO;
+import dtos.DiscountDTO;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author HuynhBao
  */
-@WebServlet(name = "DeleteCarController", urlPatterns = {"/DeleteCarController"})
-public class DeleteCarController extends HttpServlet {
+@WebServlet(name = "CheckDiscountController", urlPatterns = {"/CheckDiscountController"})
+public class CheckDiscountController extends HttpServlet {
 
-    private final static String ERROR = "cart.jsp";
-    private final static String SUCCESS = "cart.jsp";
-
-    private static final Logger LOGGER = Logger.getLogger(DeleteCarController.class);
+    //private final static String ERROR = "cart.jsp";
+    //private final static String SUCCESS = "cart.jsp";
+    private static final Logger LOGGER = Logger.getLogger(CheckDiscountController.class);
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,26 +42,35 @@ public class DeleteCarController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = ERROR;
+        //String url = ERROR;
         try {
-            HttpSession session = request.getSession();
-
-            String carID = request.getParameter("txtKey");
-            if (!"".equals(carID)) {
-                CartDTO cart = (CartDTO) session.getAttribute("CART");
-                if (cart != null) {
-                    cart.delete(carID);
-                    session.setAttribute("CART", cart);
-                    request.setAttribute("MSG", true);
-                    url = SUCCESS;
+            String discountID = request.getParameter("txtDiscount");
+            Gson gson = new Gson();
+            String json = gson.toJson("Empty");
+            if (!"".equals(discountID)) {
+                json = gson.toJson("NotFound");
+                UserDAO dao = new UserDAO();
+                DiscountDTO discount = dao.checkDiscount(discountID);
+                if (discount != null) {
+                    DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                    Date now = df.parse(df.format(new Date()));
+                    if (now.compareTo(discount.getStartDate()) >= 0 && now.compareTo(discount.getEndDate()) <= 0) {
+                        double total = Double.parseDouble(request.getParameter("txtTotal"));
+                        dao.calculateDiscount(discount, total);
+                        json = gson.toJson(discount);
+                    } else {
+                        json = gson.toJson("Expired");
+                    }
                 }
-                
+
             }
+            response.setContentType("application/json");
+            response.getWriter().write(json);
 
         } catch (Exception e) {
             LOGGER.error(e.toString());
         } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+            //request.getRequestDispatcher(url).forward(request, response);
         }
     }
 

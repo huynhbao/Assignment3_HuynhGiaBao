@@ -5,27 +5,29 @@
  */
 package servlets;
 
-import dtos.CartDTO;
+import daos.UserDAO;
+import dtos.OrderDTO;
+import dtos.OrderDetailDTO;
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author HuynhBao
  */
-@WebServlet(name = "DeleteCarController", urlPatterns = {"/DeleteCarController"})
-public class DeleteCarController extends HttpServlet {
+@WebServlet(name = "OrderController", urlPatterns = {"/OrderController"})
+public class OrderController extends HttpServlet {
 
-    private final static String ERROR = "cart.jsp";
-    private final static String SUCCESS = "cart.jsp";
-
-    private static final Logger LOGGER = Logger.getLogger(DeleteCarController.class);
+    private static final String ERROR = "HistoryController";
+    private static final String SUCCESS = "HistoryController";
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class);
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,18 +43,27 @@ public class DeleteCarController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url = ERROR;
         try {
-            HttpSession session = request.getSession();
-
-            String carID = request.getParameter("txtKey");
-            if (!"".equals(carID)) {
-                CartDTO cart = (CartDTO) session.getAttribute("CART");
-                if (cart != null) {
-                    cart.delete(carID);
-                    session.setAttribute("CART", cart);
-                    request.setAttribute("MSG", true);
-                    url = SUCCESS;
+            String orderID = request.getParameter("txtOrderID");
+            if (!"".equals(orderID)) {
+                UserDAO dao = new UserDAO();
+                List<OrderDetailDTO> orderDetailList = dao.getListOrderDetail(Integer.parseInt(orderID));
+                Date now = new Date();
+                boolean checkCancel = !orderDetailList.isEmpty();
+                for (OrderDetailDTO orderDetail : orderDetailList) {
+                    if (now.compareTo(orderDetail.getCar().getStartDate()) <= 0) {
+                        checkCancel = true;
+                    }
                 }
-                
+
+                if (checkCancel) {
+                    dao.setStatusOrder(Integer.parseInt(orderID), false);
+                    request.setAttribute("SUCCESS", "true");
+                    url = SUCCESS;
+                } else {
+                    request.setAttribute("SUCCESS", "false");
+                    url = ERROR;
+                }
+
             }
 
         } catch (Exception e) {

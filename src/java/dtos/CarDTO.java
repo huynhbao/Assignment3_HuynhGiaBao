@@ -22,6 +22,7 @@ public class CarDTO {
     private int quantity;
     private Date startDate;
     private Date endDate;
+    private int days;
 
     public CarDTO() {
     }
@@ -34,6 +35,19 @@ public class CarDTO {
         this.category = category;
         this.price = price;
         this.quantity = quantity;
+    }
+    
+    public CarDTO(CarDTO newCar) {
+        this.carID = newCar.carID;
+        this.name = newCar.name;
+        this.color = newCar.color;
+        this.year = newCar.year;
+        this.category = newCar.category;
+        this.price = newCar.price;
+        this.quantity = newCar.quantity;
+        this.startDate = newCar.startDate;
+        this.endDate = newCar.endDate;
+        this.days = newCar.days;
     }
 
     public int getCarID() {
@@ -106,6 +120,14 @@ public class CarDTO {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public void setDays(int days) {
+        this.days = days;
     }
     
     

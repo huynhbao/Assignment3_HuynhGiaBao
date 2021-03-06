@@ -3,21 +3,35 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/UserDTO.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/LoginController.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/daos/ProductDAO.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/SearchDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/AddCarController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/CartDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/cart.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/UpdateCarController.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/utils/MyUtils.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/menu.jsp</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/filters/FilterDispatcher.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/invalid.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/LogoutController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/OrderController.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/CategoryDTO.java</file>
-            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/shopping.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/css/filter.css</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/history.jsp</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/login.jsp</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/ShoppingController.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/daos/UserDAO.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/RegisterController.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/CarDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/DeleteCarController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/UserDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/CheckoutController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/DiscountDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/LoginController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/daos/ProductDAO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/HistoryController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/menu.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/servlets/CheckDiscountController.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/invalid.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/OrderDetailDTO.java</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/shopping.jsp</file>
+            <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/src/java/dtos/OrderDTO.java</file>
             <file>file:/C:/Users/HuynhBao/Documents/NetBeansProjects/Assignment3_HuynhGiaBao/web/register.jsp</file>
         </group>
     </open-files>

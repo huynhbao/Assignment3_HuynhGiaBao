@@ -6,13 +6,14 @@
 package servlets;
 
 import daos.ProductDAO;
+import daos.UserDAO;
 import dtos.CarDTO;
 import dtos.CartDTO;
-import dtos.UserDTO;
+import dtos.DiscountDTO;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,13 +27,13 @@ import utils.MyUtils;
  *
  * @author HuynhBao
  */
-@WebServlet(name = "AddCarController", urlPatterns = {"/AddCarController"})
-public class AddCarController extends HttpServlet {
+@WebServlet(name = "CheckoutController", urlPatterns = {"/CheckoutController"})
+public class CheckoutController extends HttpServlet {
 
-    private static final String ERROR = "invalid.jsp";
-    private static final String SUCCESS = "ShoppingController";
+    private static final String ERROR = "cart.jsp";
+    private static final String SUCCESS = "checkout.jsp";
 
-    private static final Logger LOGGER = Logger.getLogger(AddCarController.class);
+    private static final Logger LOGGER = Logger.getLogger(CheckoutController.class);
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,65 +47,58 @@ public class AddCarController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         String url = ERROR;
         try {
-            HttpSession session = request.getSession();
-            UserDTO user = (UserDTO) session.getAttribute("LOGIN_USERDTO");
-
-            String carID = request.getParameter("txtCarID");
-            String startDateStr = request.getParameter("txtStartDate");
-            String endDateStr = request.getParameter("txtEndDate");
-
             CartDTO cart = (CartDTO) session.getAttribute("CART");
-            if (cart == null) {
-                cart = new CartDTO(user.getEmail(), null);
-            }
 
-            try {
-                ProductDAO dao = new ProductDAO();
-                CarDTO car = dao.getCarDTO(Integer.parseInt(carID));
-                if (car != null) {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    Date startDate = null;
-                    Date endDate = null;
-                    if (startDateStr.isEmpty()) {
-                        request.setAttribute("MSG", "Start Date is empty!");
-                    } else {
-                        startDate = df.parse(startDateStr);
+            if (cart != null) {
+                ProductDAO pDAO = new ProductDAO();
+                List<CarDTO> outOfStockList = new ArrayList<>();
+                for (CarDTO car1 : cart.getCart().values()) {
+                    int totalQuantity = car1.getQuantity();
+                    for (CarDTO car2 : cart.getCart().values()) {
+                        if (!cart.getKey(car1).equals(cart.getKey(car2))) {
+                            if (car1.getStartDate().compareTo(car2.getEndDate()) <= 0 && car2.getStartDate().compareTo(car1.getEndDate()) <= 0) {
+                                int getQuantityDB = pDAO.checkCarAvailableQuantity(car1.getCarID());
+                                totalQuantity += car2.getQuantity();
+                                if (totalQuantity > getQuantityDB) {
+                                    CarDTO car = new CarDTO(car1);
+                                    car.setQuantity(getQuantityDB);
+                                    outOfStockList.add(car);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (outOfStockList.isEmpty()) {
+                    String discountID = request.getParameter("txtDiscountID");
+                    DiscountDTO discount = null;
+                    UserDAO dao = new UserDAO();
+                    double total = 0;
+                    for (CarDTO car : cart.getCart().values()) {
+                        total += car.getQuantity() * car.getPrice().floatValue() * car.getDays();
                     }
 
-                    if (endDateStr.isEmpty()) {
-                        request.setAttribute("MSG", "End Date is empty!");
-                    } else {
-                        endDate = df.parse(endDateStr);
-                    }
-
-                    if (startDate != null && endDate != null) {
-                        Date now = df.parse(df.format(new Date()));
-                        if (startDate.after(endDate)) {
-                            request.setAttribute("MSG", "End Date must greater or equal start date!");
-                        } else if (startDate.compareTo(now) < 0) {
-                            request.setAttribute("ERROR_START_DATE", "The rental date must be greater than the current date!");
-                        } else {
-                            car.setStartDate(startDate);
-                            car.setEndDate(endDate);
-                            car.setQuantity(1);
-                            int days = MyUtils.getDays(car.getStartDate(), car.getEndDate());
-                            car.setDays(days);
-                            cart.add(car);
-                            session.setAttribute("CART", cart);
-                            request.setAttribute("SUCCESS", true);
-                            url = SUCCESS;
+                    if (!"".equals(discountID)) {
+                        discount = dao.checkDiscount(discountID);
+                        if (discount != null) {
+                            dao.calculateDiscount(discount, total);
                         }
                     }
 
+                    boolean checkout = dao.checkout(cart, discount, new BigDecimal(total));
+                    if (checkout) {
+                        session.setAttribute("CART", null);
+                        url = SUCCESS;
+                    }
                 } else {
-                    request.setAttribute("MSG", "Car not found");
+                    request.setAttribute("OUT_OF_STOCK_LIST", outOfStockList);
+                    url = ERROR;
                 }
-            } catch (NumberFormatException ex) {
-                request.setAttribute("MSG", "Car not found");
-            }
 
+            }
         } catch (Exception e) {
             LOGGER.error(e.toString());
         } finally {

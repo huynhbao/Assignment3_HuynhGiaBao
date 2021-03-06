@@ -5,12 +5,12 @@
  */
 package servlets;
 
+import daos.ProductDAO;
 import dtos.CarDTO;
 import dtos.CartDTO;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -53,14 +53,45 @@ public class UpdateCarController extends HttpServlet {
             if (quantity > 0) {
                 CartDTO cart = (CartDTO) session.getAttribute("CART");
                 if (cart != null) {
-                    if (cart.getCart().get(key) != null) {
+                    CarDTO currentCarDTO = new CarDTO(cart.getCart().get(key));
+                    boolean overlap = false;
+                    int totalQuantity = quantity;
+                    ProductDAO dao = new ProductDAO();
+                    for (CarDTO value : cart.getCart().values()) {
+                        if (!cart.getKey(value).equals(cart.getKey(currentCarDTO))) {
+                            if (currentCarDTO.getStartDate().compareTo(value.getEndDate()) <= 0 && value.getStartDate().compareTo(currentCarDTO.getEndDate()) <= 0) {
+                                totalQuantity += value.getQuantity();
+                                overlap = true;
+                            }
+                        }
+                    }
+
+                    /*if (overlap) {
+                        int getQuantityDB = dao.checkCarAvailableQuantity(currentCarDTO.getCarID());
+                        if (getQuantityDB >= totalQuantity) {
+                            cart.getCart().get(key).setQuantity(quantity);
+                            cart.update(cart.getCart().get(key));
+                            request.setAttribute("SUCCESS", true);
+                            session.setAttribute("CART", cart);
+                        } else {
+                            List<CarDTO> outOfStockList = new ArrayList<>();
+                            currentCarDTO.setQuantity(getQuantityDB - (totalQuantity - quantity));
+                            outOfStockList.add(currentCarDTO);
+                            request.setAttribute("OUT_OF_STOCK_LIST", outOfStockList);
+                        }
+                    } else {
                         cart.getCart().get(key).setQuantity(quantity);
                         cart.update(cart.getCart().get(key));
                         request.setAttribute("SUCCESS", true);
                         session.setAttribute("CART", cart);
-                        url = SUCCESS;
-                    }
-                    
+                    }*/
+
+                    cart.getCart().get(key).setQuantity(quantity);
+                    cart.update(cart.getCart().get(key));
+                    request.setAttribute("SUCCESS", true);
+                    session.setAttribute("CART", cart);
+
+                    url = SUCCESS;
 
                 }
             }

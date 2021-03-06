@@ -33,8 +33,16 @@
                 letter-spacing: 3px;
             }
 
-            #checkout-table {
-                width: 100px;
+            table#checkout-table {
+                width: 450px;
+            }
+
+            #checkout-table th {
+                width: 25%;
+            }
+
+            table#checkout-table td {
+                text-align: center;
             }
 
             #checkout-table tr, #checkout-table td, #checkout-table th {
@@ -46,6 +54,26 @@
     </head>
     <body>
         <jsp:include page="menu.jsp"/>
+        <!-- Modal MsgBox -->
+        <div class="modal fade" id="msgModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Message
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-msg">Successful!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="container" style="margin-top: 140px;">
             <div class="row w-100">
                 <div class="col-lg-12 col-md-12 col-12">
@@ -81,13 +109,14 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th style="width:40%">Name</th>
+                                        <th style="width:35%">Name</th>
                                         <th>Category</th>
                                         <th style="width:10%">Quantity</th>
-                                        <th>Num of days</th>
+                                        <th>Days</th>
                                         <th class="text-center">Price</th>
                                         <th class="text-center">Total</th>
                                         <th class="text-center">Action</th>
+                                        <th class="text-center">Note</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -121,12 +150,10 @@
                                                 </small>
                                             </td>
                                             <td data-th="NumOfDays" class="text-center">
-
-                                                <fmt:formatNumber var="numOfDays" value="${(cart.endDate.time - cart.startDate.time) / (1000*60*60*24)}" minFractionDigits="0" maxFractionDigits="0"/>
-                                                <c:out value = "${numOfDays}" />
+                                                <c:out value = "${cart.days}" />
                                             </td>
                                             <td data-th="Price" class="text-center">$${cart.price}</td>
-                                            <td data-th="Total" class="text-center">$${cart.price * cart.quantity * numOfDays}</td>
+                                            <td data-th="Total" class="text-center">$${cart.price * cart.quantity * cart.days}</td>
                                             <td class="actions" data-th="">
                                                 <div class="text-center">
                                                     <button type="submit" form="updateCarForm + ${counter.count}" value="Update Item" class="btn btn-white border-secondary bg-white btn-md mb-2">
@@ -141,34 +168,60 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <c:if test="${not empty requestScope.OUT_OF_STOCK_LIST}">
+                                                <c:if test="${requestScope.OUT_OF_STOCK_LIST != null and not empty requestScope.OUT_OF_STOCK_LIST}">
                                                     <c:forEach var="outStockList" items="${requestScope.OUT_OF_STOCK_LIST}">
-                                                        <c:if test="${outStockList.carID == cart.carID}">
-                                                            This item has only ${outStockList.quantity} product left
+                                                        <c:if test="${sessionScope.CART.getKey(cart) == sessionScope.CART.getKey(outStockList)}">
+                                                            There are ONLY ${outStockList.quantity} cars left
                                                         </c:if>
                                                     </c:forEach>
                                                 </c:if>
                                             </td>
                                         </tr>
-                                        <c:set var="total" value="${total + (cart.price * cart.quantity)}"/>
+                                        <c:set var="total" value="${total + (cart.price * cart.quantity * cart.days)}"/>
                                     </c:forEach>
 
                                 </tbody>
                             </table>
                             <div class="mt-3 float-right text-right">
-                                <h4>Subtotal:</h4>
-                                <h1>$${total}</h1>
-                                <table id="checkout-table" border="1">
-                                    <tr>
-                                        <th>Discount</th>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total</th>
-                                        <td>$${total}</td>
-                                    </tr>
-                                </table>
+                                <hr>
+                                <div>
+                                    <table id="checkout-table" border="1">
+                                        <tr>
+                                            <th>Discount</th>
+                                            <td>
+                                                <form action="CheckDiscount" id="check-discount">
+                                                    <div>
+                                                        <input type="hidden" name="txtTotal" value="${total}" />
+                                                        <input type="text" class="form-control text-center" name="txtDiscount" id="txtDiscount" style=" width: auto; display: inline-block; text-transform: uppercase;" value="">
+                                                        <!--<input type="submit" class="btn" style=" margin-top: -5px; background-color: #000000; color: #fff;">Apply</button>-->
+                                                        <button type="submit" id="btn-discount" class="btn" style=" margin-top: -5px; background-color: #000000; color: #fff;">Apply</button>
+                                                    </div>
+                                                </form>
+                                                <small class="text-danger" id="text-discount">
 
+                                                </small>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td class="font-weight-bold">
+                                                <div>
+                                                    $${total}
+                                                </div>
+                                                <div id="total-discount">
+
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="d-block my-3">
+                                    <form action="checkout" method="POST">
+                                        <input type="hidden" id="text-discountID" name="txtDiscountID" value="" />
+                                        <input type="submit" class="btn btn-primary mb-4 btn-lg pl-5 pr-5" value="Confirm" />
+                                    </form>
+                                </div>
                             </div>
 
 
@@ -183,29 +236,7 @@
 
                 </div>
             </div>
-            <c:if test="${not empty sessionScope.CART.cart}">
-                <div class="row mt-4 d-flex align-items-center">
-                    <div class="col-sm-12 order-md-12 text-center">
-                        <hr class="mb-4">
-                        <h4 class="mb-3">Payment</h4>
-                        <form action="MainController">
 
-                            <div class="d-block my-3">
-                                <div class="custom-control custom-radio">
-                                    <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked="" value="cash">
-                                    <label class="custom-control-label" for="credit">Cash payment upon delivery</label>
-                                </div>
-                                <div class="custom-control custom-radio mt-2">
-                                    <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" value="paypal">
-                                    <label class="custom-control-label" for="paypal">PayPal</label>
-                                </div>
-                            </div>
-                            <input type="submit" class="btn btn-primary mb-4 btn-lg pl-5 pr-5" name="btnAction" value="Confirm" />
-                        </form>
-                    </div>
-
-                </div>
-            </c:if>
             <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
                 <a href="shopping">
                     <i class="fa fa-arrow-left mr-2"></i> Continue Shopping</a>
@@ -213,7 +244,61 @@
         </div>
 
         <script>
+            
+            $(document).ready(function () {
+                var msgBox = ${requestScope.MSG == null ? false : true};
+                
+                if (msgBox) {
+                    $('#msgModal').modal('show');
+                }
+            });
+            
+            var appliedDiscount = false;
+            $("#check-discount").submit(function (e) {
+                $("#text-discount").html("");
+                $("#text-discountID").val("");
+                $("#total-discount").html("");
+                $("#txtDiscount").prop('disabled', false);
+                $("#btn-discount").html('Apply');
+                e.preventDefault();
 
+                if (!appliedDiscount) {
+                    $.ajax({
+                        url: 'checkDiscount',
+                        type: 'GET',
+                        data: $("#check-discount").serialize(),
+                        success: function (result) {
+                            if (result !== null) {
+                                if (result === "NotFound") {
+                                    $("#text-discount").html("Discount was not found!");
+                                } else if (result === "Empty") {
+                                    $("#text-discount").html("Input discount!");
+                                } else if (result === "Expired") {
+                                    $("#text-discount").html("Discount was expired!");
+                                } else {
+                                    var discount = JSON.parse(JSON.stringify(result));
+                                    if (typeof (discount.name) !== 'undefined') {
+                                        $("#txtDiscount").prop('disabled', true);
+                                        $("#total-discount").html("Discount: -$" + discount.discountValue + "<br>New Price: $" + discount.newTotal);
+                                        $("#text-discount").html("Discount " + discount.name + " has been applied successful!");
+                                        $("#text-discountID").val(discount.discountID);
+                                        $("#btn-discount").html('Remove');
+                                        appliedDiscount = true;
+                                    } else {
+                                        window.location.href = 'login';
+                                    }
+                                }
+                            }
+                        },
+                        error: function () {
+                            alert("Cannot apply this discount!");
+                        }
+                    });
+                } else {
+                    appliedDiscount = false;
+                    $("#txtDiscount").val("");
+                }
+            });
 
             function deleteProduct(ele) {
                 $('#confirm')
@@ -225,6 +310,6 @@
             }
             ;
         </script>
-
+        <jsp:include page="footer.jsp"/>
     </body>
 </html>

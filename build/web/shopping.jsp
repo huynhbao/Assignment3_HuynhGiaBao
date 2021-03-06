@@ -71,6 +71,15 @@
                         </div>
                     </div>
                     <div class="bg-white p-3 rounded shadow advance-search">
+                        <div class="text-center">
+                            <small class="text-danger">
+                                ${requestScope.ERROR_NAME}
+                            </small>
+                            <br>
+                            <small class="text-danger">
+                                ${requestScope.ERROR_CATEGORY}
+                            </small>
+                        </div>
                         <span class="desc">ADVANCED SEARCH</span>
 
                         <div class="form-group mb-4">

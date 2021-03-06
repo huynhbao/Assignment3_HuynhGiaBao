@@ -5,9 +5,14 @@
  */
 package servlets;
 
+import daos.ProductDAO;
 import daos.UserDAO;
+import dtos.CarDTO;
+import dtos.CartDTO;
 import dtos.UserDTO;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
+import utils.MyUtils;
 
 /**
  *
@@ -26,6 +32,7 @@ public class LoginController extends HttpServlet {
     private static final String ERROR = "login.jsp";
     private static final String SUCCESS = "ShoppingController";
     private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,7 +51,7 @@ public class LoginController extends HttpServlet {
             UserDTO userSs = (UserDTO) session.getAttribute("LOGIN_USERDTO");
 
             if (userSs != null) {
-                
+
             } else {
                 String email = request.getParameter("txtEmail");
                 String password = request.getParameter("txtPassword");
@@ -57,6 +64,31 @@ public class LoginController extends HttpServlet {
                         if (user.getStatus()) {
                             session.setAttribute("LOGIN_USERDTO", user);
                             url = SUCCESS;
+                            CartDTO cart = (CartDTO) session.getAttribute("CART");
+                            if (cart == null) {
+                                cart = new CartDTO(user.getEmail(), null);
+                            }
+                            
+                            ProductDAO pdao = new ProductDAO();
+                            
+                            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                            CarDTO car1 = pdao.getCarDTO(1);
+                            car1.setStartDate(df.parse("2021-03-05"));
+                            car1.setEndDate(df.parse("2021-03-07"));
+                            car1.setQuantity(1);
+                            int days1 = MyUtils.getDays(car1.getStartDate(), car1.getEndDate());
+                            car1.setDays(days1);
+                            cart.add(car1);
+                            
+                            CarDTO car2 = pdao.getCarDTO(1);
+                            car2.setStartDate(df.parse("2021-03-06"));
+                            car2.setEndDate(df.parse("2021-03-08"));
+                            car2.setQuantity(1);
+                            int days2 = MyUtils.getDays(car2.getStartDate(), car2.getEndDate());
+                            car2.setDays(days2);
+                            cart.add(car2);
+                            
+                            session.setAttribute("CART", cart);
                         } else {
                             request.setAttribute("LOGIN_MSG", "Your account has not been activated!");
                         }

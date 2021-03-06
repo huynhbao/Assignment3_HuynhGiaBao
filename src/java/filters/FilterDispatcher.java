@@ -45,6 +45,11 @@ public class FilterDispatcher implements Filter {
         USER.add("AddCarController");
         USER.add("UpdateCarController");
         USER.add("DeleteCarController");
+        USER.add("CheckDiscountController");
+        USER.add("CheckoutController");
+        USER.add("HistoryController");
+        USER.add("OrderController");
+        USER.add("LogoutController");
     }
 
     /**

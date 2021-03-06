@@ -5,7 +5,6 @@
  */
 package servlets;
 
-import dtos.CartDTO;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,14 +18,12 @@ import org.apache.log4j.Logger;
  *
  * @author HuynhBao
  */
-@WebServlet(name = "DeleteCarController", urlPatterns = {"/DeleteCarController"})
-public class DeleteCarController extends HttpServlet {
+@WebServlet(name = "LogoutController", urlPatterns = {"/LogoutController"})
+public class LogoutController extends HttpServlet {
 
-    private final static String ERROR = "cart.jsp";
-    private final static String SUCCESS = "cart.jsp";
-
-    private static final Logger LOGGER = Logger.getLogger(DeleteCarController.class);
-
+    private static final String LOGIN = "login";
+    
+    private static final Logger LOGGER = Logger.getLogger(LogoutController.class);
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,26 +36,17 @@ public class DeleteCarController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = ERROR;
+        String url = LOGIN;
         try {
-            HttpSession session = request.getSession();
-
-            String carID = request.getParameter("txtKey");
-            if (!"".equals(carID)) {
-                CartDTO cart = (CartDTO) session.getAttribute("CART");
-                if (cart != null) {
-                    cart.delete(carID);
-                    session.setAttribute("CART", cart);
-                    request.setAttribute("MSG", true);
-                    url = SUCCESS;
-                }
-                
+            HttpSession ss = request.getSession(false);
+            if (ss != null) {
+                ss.invalidate();
+                url = LOGIN;
             }
-
         } catch (Exception e) {
             LOGGER.error(e.toString());
-        } finally {
-            request.getRequestDispatcher(url).forward(request, response);
+        }finally {
+            response.sendRedirect(url);
         }
     }
 

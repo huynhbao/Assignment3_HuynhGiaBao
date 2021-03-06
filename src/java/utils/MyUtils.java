@@ -10,21 +10,20 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
+import java.util.Date;
 
 /**
  *
  * @author HuynhBao
  */
 public class MyUtils {
+
     public static final String FULLNAME_PATTERN = "[a-zA-Z\\s]+";
     public static final String PHONE_PATTERN = "\\d{10}";
     public static final String EMAIL_PATTERN = "[a-zA-Z0-9]+[._a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]*[a-zA-Z]*@[a-zA-Z0-9]{2,8}.[a-zA-Z.]{2,6}";
-    
-    
+
     public static final int recordPerPage = 1;
-    
-    
-    
+
     public static String capitalFullName(String fullName) {
         fullName = fullName.replaceAll("\\s+", " ").toLowerCase();
         String[] arr = fullName.split(" ");
@@ -41,32 +40,35 @@ public class MyUtils {
         s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return s;
     }
-    
-    public static byte[] getSHA(String input) throws NoSuchAlgorithmException 
-    {  
+
+    public static byte[] getSHA(String input) throws NoSuchAlgorithmException {
         // Static getInstance method is called with hashing SHA  
-        MessageDigest md = MessageDigest.getInstance("SHA-256");  
-  
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+
         // digest() method called  
         // to calculate message digest of an input  
         // and return array of byte 
-        return md.digest(input.getBytes(StandardCharsets.UTF_8));  
-    } 
-    
-    public static String toHexString(byte[] hash) 
-    { 
+        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String toHexString(byte[] hash) {
         // Convert byte array into signum representation  
-        BigInteger number = new BigInteger(1, hash);  
-  
+        BigInteger number = new BigInteger(1, hash);
+
         // Convert message digest into hex value  
-        StringBuilder hexString = new StringBuilder(number.toString(16));  
-  
+        StringBuilder hexString = new StringBuilder(number.toString(16));
+
         // Pad with leading zeros 
-        while (hexString.length() < 32)  
-        {  
-            hexString.insert(0, '0');  
-        }  
-  
-        return hexString.toString();  
+        while (hexString.length() < 32) {
+            hexString.insert(0, '0');
+        }
+
+        return hexString.toString();
+    }
+
+    public static int getDays(Date startDate, Date endDate) {
+        long days = endDate.getTime() - startDate.getTime();
+        int totalDays = (int) (days / 86400000) + 1;
+        return totalDays;
     }
 }

@@ -52,7 +52,7 @@ public class ShoppingController extends HttpServlet {
         try {
             ProductDAO pDAO = new ProductDAO();
 
-            String searchName = request.getParameter("txtCarName");
+            String searchName = request.getParameter("txtSearchCarName");
             String searchStartDate = request.getParameter("txtStartDate");
             String searchEndDate = request.getParameter("txtEndDate");
             String searchCategory = request.getParameter("cbCategory");
@@ -97,6 +97,13 @@ public class ShoppingController extends HttpServlet {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = null;
                 Date endDate = null;
+                
+                if (searchName.isEmpty() && searchCategory.isEmpty()) {
+                    hasRequiredField = false;
+                    request.setAttribute("ERROR_NAME", "Name is empty!");
+                    request.setAttribute("ERROR_CATEGORY", "Category is empty!");
+                }
+                
                 if (searchStartDate.isEmpty()) {
                     hasRequiredField = false;
                     request.setAttribute("ERROR_START_DATE", "Start Date is empty!");
@@ -119,13 +126,12 @@ public class ShoppingController extends HttpServlet {
                     } else if (startDate.compareTo(now) < 0) {
                         hasRequiredField = false;
                         request.setAttribute("ERROR_START_DATE", "The rental date must be greater than the current date!");
-                    } else if (endDate.compareTo(startDate) <= 0) {
-                        request.setAttribute("ERROR_END_DATE", "You must rent a minimum of 1 day!");
-                        hasRequiredField = false;
                     } else {
                         search.setStartDate(startDate);
                         search.setEndDate(endDate);
                     }
+                } else {
+                    hasRequiredField = false;
                 }
 
                 if (searchQuantity.isEmpty()) {
@@ -151,9 +157,8 @@ public class ShoppingController extends HttpServlet {
 
                     if (!searchName.isEmpty()) {
                         search.setName(searchName);
-                    } else {
-                        search.setName("");
                     }
+                    
                     if (!searchCategory.isEmpty()) {
                         search.setCategoryID(searchCategory);
                     }

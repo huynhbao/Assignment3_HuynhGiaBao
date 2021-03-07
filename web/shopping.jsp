@@ -58,12 +58,21 @@
             <div class="search-container mb-5">
                 <form action="shopping">
                     <div class="basic-search">
-                        <div class="input-field">
-                            <input class="form-control border-primary" type="text" placeholder="Search Car Name" name="txtSearchCarName" value="${param.txtSearchCarName}">
+                        <div class="input-field input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="radio" name="radioSearch" value="byName" ${param.radioSearch == 'byName' or not param.radioSearch ? 'checked' : ''}>
+                                </div>
+                            </div>
+                            <input class="form-control border-primary input-car-name" type="text" placeholder="Search Car Name" name="txtSearchCarName" value="${param.txtSearchCarName}">
                         </div>
                         <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="radio" name="radioSearch" value="byCastegory" ${param.radioSearch == 'byCastegory' ? 'checked' : ''}>
+                                </div>
+                            </div>
                             <select class="form-control" id="category-select-box" name="cbCategory">
-                                <option ${param.cbCategory == '' ? 'selected' : ''} value="">Select Category</option>
                                 <c:forEach items="${requestScope.CATEGORY_LIST}" var="category">
                                     <option ${param.cbCategory == category.categoryID ? 'selected' : ''} value="${category.categoryID}">${category.name}</option>
                                 </c:forEach>
@@ -170,7 +179,7 @@
                     <jsp:include page="paging.jsp" >
                         <jsp:param name="currentPage" value="${currentPage}" />
                         <jsp:param name="noOfPages" value="${noOfPages}" />
-                        <jsp:param name="hrefLink" value="shopping?txtSearchCarName=${param.txtSearchCarName}&cbCategory=${param.cbCategory}&txtStartDate=${param.txtStartDate}&txtEndDate=${param.txtEndDate}&txtQuantity=${param.txtQuantity}" />
+                        <jsp:param name="hrefLink" value="shopping?radioSearch=${param.radioSearch}&txtSearchCarName=${param.txtSearchCarName}&cbCategory=${param.cbCategory}&txtStartDate=${param.txtStartDate}&txtEndDate=${param.txtEndDate}&txtQuantity=${param.txtQuantity}" />
                     </jsp:include>
                 </div>
             </div>

@@ -44,7 +44,7 @@ public class UserDAO {
         try {
             conn = DBUtils.getConnection();
             if (conn != null) {
-                String sql = "SELECT name, phone, address, status FROM tblUsers WHERE email = ? AND password = ?";
+                String sql = "SELECT name, phone, address, status, code FROM tblUsers WHERE email = ? AND password = ?";
                 stm = conn.prepareStatement(sql);
                 stm.setString(1, email);
                 stm.setString(2, password);
@@ -54,8 +54,9 @@ public class UserDAO {
                     String name = rs.getString("name");
                     String phone = rs.getString("phone");
                     String address = rs.getString("address");
+                    String code = rs.getString("code");
                     boolean status = rs.getBoolean("status");
-                    result = new UserDTO(email, name, "", phone, address, status);
+                    result = new UserDTO(email, name, "", phone, address, code, status);
                 }
             }
         } catch (Exception e) {
@@ -171,7 +172,7 @@ public class UserDAO {
                 stm.executeUpdate();
                 rs = stm.getGeneratedKeys();
                 if (rs.next()) {
-                    String sqlOrderDetail = "INSERT INTO tblOrderDetails(carID, quantity, price, startDate, endDate, days, status, orderID) VALUES(?,?,?,?,?,?,?,?)";
+                    String sqlOrderDetail = "INSERT INTO tblOrderDetails(carID, quantity, price, startDate, endDate, days, orderID) VALUES(?,?,?,?,?,?,?)";
                     int orderID = rs.getInt(1);
                     for (CarDTO car : cart.getCart().values()) {
                         stm = conn.prepareStatement(sqlOrderDetail, orderID);
@@ -181,8 +182,7 @@ public class UserDAO {
                         stm.setDate(4, new java.sql.Date(car.getStartDate().getTime()));
                         stm.setDate(5, new java.sql.Date(car.getEndDate().getTime()));
                         stm.setInt(6, car.getDays());
-                        stm.setBoolean(7, true);
-                        stm.setInt(8, rs.getInt(1));
+                        stm.setInt(7, rs.getInt(1));
                         stm.executeUpdate();
                     }
                     result = true;

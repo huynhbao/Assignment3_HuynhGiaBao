@@ -240,7 +240,7 @@
                                                 </c:if>
                                             </c:when>
                                             <c:otherwise>
-                                                This order has been cancelled!
+                                                <p class="text-danger">This order has been canceled!</p>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -278,7 +278,7 @@
         </div>
         <script>
             $(document).ready(function () {
-                var checkAttr = ${requestScope.SUCCESS == null};
+                var checkAttr = ${requestScope.SUCCESS != null};
                 if (checkAttr) {
                     var msgBox = ${requestScope.SUCCESS};
                     if (msgBox) {

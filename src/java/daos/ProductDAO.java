@@ -75,9 +75,9 @@ public class ProductDAO {
                 stm.setInt(6, search.getQuantity());
                 
                 int count = 7;
-                if (search.getName() != null) {
+                if (!search.getName().isEmpty()) {
                     stm.setString(count++, "%" + search.getName() + "%");
-                } else if (search.getCategoryID() != null) {
+                } else if (!search.getCategoryID().isEmpty()) {
                     stm.setString(count++, search.getCategoryID());
                 }
 

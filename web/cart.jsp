@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="container" style="margin-top: 140px;">
             <div class="row w-100">
                 <div class="col-lg-12 col-md-12 col-12">
@@ -182,7 +182,27 @@
 
                                 </tbody>
                             </table>
+                            <div class="mt-3 float-left text-left">
+                                <h4 class="text-center">User Information</h4>
+                                <hr>
+                                <form action="checkout" method="POST" id="checkout-form">
+                                    <input type="hidden" id="text-discountID" name="txtDiscountID" value="" />
+                                    <div class="form-group">
+                                        <label for="txtFullName">Full Name</label>
+                                        <input type="text" class="form-control" name="txtFullName" style=" width: 300px;" value="${sessionScope.LOGIN_USERDTO.name}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="txtPhone">Phone Number</label>
+                                        <input type="text" class="form-control" name="txtPhone" style=" width: 300px;" value="${sessionScope.LOGIN_USERDTO.phone}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="txtAddress">Address</label>
+                                        <input type="text" class="form-control" name="txtAddress" style=" width: 300px;" value="${sessionScope.LOGIN_USERDTO.address}">
+                                    </div>
+                                </form>
+                            </div>
                             <div class="mt-3 float-right text-right">
+                                <h4 class="text-center">Cart Information</h4>
                                 <hr>
                                 <div>
                                     <table id="checkout-table" border="1">
@@ -217,10 +237,7 @@
                                     </table>
                                 </div>
                                 <div class="d-block my-3">
-                                    <form action="checkout" method="POST">
-                                        <input type="hidden" id="text-discountID" name="txtDiscountID" value="" />
-                                        <input type="submit" class="btn btn-primary mb-4 btn-lg pl-5 pr-5" value="Confirm" />
-                                    </form>
+                                    <input type="submit" form="checkout-form" class="btn btn-primary mb-4 btn-lg pl-5 pr-5" value="Confirm" />
                                 </div>
                             </div>
 
@@ -237,22 +254,22 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
+            <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left mt-3">
                 <a href="shopping">
                     <i class="fa fa-arrow-left mr-2"></i> Continue Shopping</a>
             </div>
         </div>
 
         <script>
-            
+
             $(document).ready(function () {
                 var msgBox = ${requestScope.MSG == null ? false : true};
-                
+
                 if (msgBox) {
                     $('#msgModal').modal('show');
                 }
             });
-            
+
             var appliedDiscount = false;
             $("#check-discount").submit(function (e) {
                 $("#text-discount").html("");

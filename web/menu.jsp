@@ -10,7 +10,7 @@
     <body>
         <header class="header" id="header">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <h2><a exact="true" class="logo" href="shopping">Quiz</a></h2>
+                <h2><a exact="true" class="logo" href="shopping">Car Rental</a></h2>
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                     </li>

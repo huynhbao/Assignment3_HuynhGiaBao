@@ -29,6 +29,7 @@ import utils.MyUtils;
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
 
+    private static final String ACTIVE_PAGE = "active.jsp";
     private static final String ERROR = "login.jsp";
     private static final String SUCCESS = "ShoppingController";
     private static final Logger LOGGER = Logger.getLogger(LoginController.class);
@@ -64,13 +65,14 @@ public class LoginController extends HttpServlet {
                         if (user.getStatus()) {
                             session.setAttribute("LOGIN_USERDTO", user);
                             url = SUCCESS;
+                            
                             CartDTO cart = (CartDTO) session.getAttribute("CART");
                             if (cart == null) {
                                 cart = new CartDTO(user.getEmail(), null);
                             }
-                            
+
                             ProductDAO pdao = new ProductDAO();
-                            
+
                             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                             CarDTO car1 = pdao.getCarDTO(1);
                             car1.setStartDate(df.parse("2021-03-05"));
@@ -79,7 +81,7 @@ public class LoginController extends HttpServlet {
                             int days1 = MyUtils.getDays(car1.getStartDate(), car1.getEndDate());
                             car1.setDays(days1);
                             cart.add(car1);
-                            
+
                             CarDTO car2 = pdao.getCarDTO(1);
                             car2.setStartDate(df.parse("2021-03-06"));
                             car2.setEndDate(df.parse("2021-03-08"));
@@ -87,10 +89,12 @@ public class LoginController extends HttpServlet {
                             int days2 = MyUtils.getDays(car2.getStartDate(), car2.getEndDate());
                             car2.setDays(days2);
                             cart.add(car2);
-                            
+
                             session.setAttribute("CART", cart);
                         } else {
                             request.setAttribute("LOGIN_MSG", "Your account has not been activated!");
+                            request.setAttribute("USER_EMAIL", user.getEmail());
+                            url = ACTIVE_PAGE;
                         }
                     } else {
                         request.setAttribute("LOGIN_MSG", "Email or Password incorrect!");

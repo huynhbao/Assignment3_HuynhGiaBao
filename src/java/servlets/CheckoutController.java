@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import utils.MyUtils;
 
 /**
  *
@@ -91,6 +90,7 @@ public class CheckoutController extends HttpServlet {
                     boolean checkout = dao.checkout(cart, discount, new BigDecimal(total));
                     if (checkout) {
                         session.setAttribute("CART", null);
+                        request.setAttribute("SUCCESS", true);
                         url = SUCCESS;
                     }
                 } else {

@@ -57,6 +57,7 @@ public class ShoppingController extends HttpServlet {
             String searchEndDate = request.getParameter("txtEndDate");
             String searchCategory = request.getParameter("cbCategory");
             String searchQuantity = request.getParameter("txtQuantity");
+            String searchType = request.getParameter("radioSearch");
 
             String currentPageParam = request.getParameter("page");
             int currentPage = 1;
@@ -87,21 +88,36 @@ public class ShoppingController extends HttpServlet {
             if (searchEndDate == null) {
                 searchEndDate = "";
             }
+            if (searchType == null) {
+                searchType = "";
+            }
 
             Map<Integer, List<CarDTO>> productList = new HashMap<>();
             productList.put(0, null);
-            boolean emptySearch = searchCategory.isEmpty() && searchName.isEmpty() && searchQuantity.isEmpty() && searchStartDate.isEmpty() && searchEndDate.isEmpty();
+            boolean emptySearch = searchType.isEmpty() && searchQuantity.isEmpty() && searchStartDate.isEmpty() && searchEndDate.isEmpty();
             if (!emptySearch) {
                 boolean hasRequiredField = true;
                 SearchDTO search = new SearchDTO();
+                search.setName("");
+                search.setCategoryID("");
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = null;
                 Date endDate = null;
                 
-                if (searchName.isEmpty() && searchCategory.isEmpty()) {
-                    hasRequiredField = false;
-                    request.setAttribute("ERROR_NAME", "Name is empty!");
-                    request.setAttribute("ERROR_CATEGORY", "Category is empty!");
+                if ("byName".equals(searchType)) {
+                    if (searchName.isEmpty()) {
+                        hasRequiredField = false;
+                        request.setAttribute("ERROR_NAME", "Name is empty!");
+                    } else {
+                        search.setName(searchName);
+                    }
+                } else {
+                    if (searchCategory.isEmpty()) {
+                        hasRequiredField = false;
+                        request.setAttribute("ERROR_CATEGORY", "Category is empty!");
+                    } else {
+                        search.setCategoryID(searchCategory);
+                    }
                 }
                 
                 if (searchStartDate.isEmpty()) {
@@ -154,14 +170,6 @@ public class ShoppingController extends HttpServlet {
                 }
 
                 if (hasRequiredField) {
-
-                    if (!searchName.isEmpty()) {
-                        search.setName(searchName);
-                    }
-                    
-                    if (!searchCategory.isEmpty()) {
-                        search.setCategoryID(searchCategory);
-                    }
 
                     productList = pDAO.searchProduct(currentPage, search);
                 }
